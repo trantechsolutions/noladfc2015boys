@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Orleans DFC - Elite Youth Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            /* Dark blue-gray background */
+        }
+
+        [class*="-yellow-500"] {
+            color: #c7a566 !important;
+        }
+
+        /* New FUT Card Styles */
+        .fut-card {
+            position: relative;
+            width: 300px;
+            height: 420px;
+            background: linear-gradient(155deg, #000000 0%, #acd3f2 100%);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            perspective: 1500px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            border: 3px solid #c7a566;
+            /* Gold border */
+        }
+
+        .fut-card:hover {
+            transform: translateY(-15px) rotateY(10deg) rotateX(5deg);
+            box-shadow: 0 25px 40px rgba(253, 224, 71, 0.3);
+        }
+
+        .fut-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 60%);
+            transform: rotate(0deg);
+            transition: transform 0.5s ease;
+        }
+
+        .fut-card:hover::before {
+            transform: rotate(180deg);
+        }
+
+        .fut-card .player-image {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            z-index: 3;
+            transition: transform 0.4s ease;
+        }
+
+        .fut-card:hover .player-image {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .fut-card .card-top {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 4;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .fut-card .rating {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .fut-card .position {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .fut-card .team-logo {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 50px;
+            height: 60px;
+            z-index: 4;
+        }
+
+        .fut-card .player-name {
+            position: absolute;
+            bottom: 20%;
+            width: 100%;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #acd3f2;
+            /* Gold color */
+            z-index: 4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .fut-card .stats-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: .5rem 1.5rem;
+            z-index: 2;
+            background: linear-gradient(to top, rgba(17, 24, 39, 0.9), transparent);
+        }
+
+        .fut-card .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            color: white;
+            text-align: center;
+        }
+
+        .fut-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #c7a566;
+            /* Gold color */
+        }
+
+        .fut-card .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .fut-card .nationality {
+            position: absolute;
+            bottom: 35%;
+            left: 1.5rem;
+            width: 40px;
+            z-index: 4;
+        }
+
+        .team-header {
+            background: url('team.jpg') no-repeat center center/cover;
+        }
+
+        .nav-link {
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #c7a566;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <!-- Navigation -->
+    <nav class="bg-gray-800 bg-opacity-80 backdrop-blur-md p-4 fixed w-full top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-3xl font-black tracking-wider text-white">NOLA DFC 2015 Boys</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link font-semibold">About Us</a>
+                <a href="#players" class="nav-link font-semibold">Players</a>
+                <a href="#goals" class="nav-link font-semibold">Our Goals</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4">
+            <a href="#about" class="block py-2 px-4 text-sm hover:bg-gray-700 rounded">About Us</a>
+            <a href="#players" class="block py-2 px-4 text-sm hover:bg-gray-700 rounded">Players</a>
+            <a href="#goals" class="block py-2 px-4 text-sm hover:bg-gray-700 rounded">Our Goals</a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="team-header h-screen flex items-center justify-center text-center relative">
+        <div class="absolute inset-0 bg-black opacity-60"></div>
+        <div class="relative z-10">
+            <h1 style="padding-top: 20rem;" class="text-6xl md:text-8xl font-black uppercase tracking-widest text-shadow">NOLA DFC 2015 Boys</h1>
+            <p class="text-xl md:text-2xl mt-4 tracking-wider font-black text-yellow-500 text-shadow">Building Champions for Life</p>
+        </div>
+    </header>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-6">About New Orleans DFC</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-300 mb-6">
+                DFC is a youth soccer club based in Kenner, LA. DFC’s mission is to create a positive impact on youth in
+                our community through quality soccer training, thereby improving opportunities for players of all ages
+                and playing abilities to create a passion for the sport of soccer that will last a lifetime, and to help
+                raise the level of soccer in our community. Inherent in this mission are the goals of providing youth
+                development programs and promoting pay-less-to-play programs for competitive teams.
+            </p>
+            <p class="max-w-3xl mx-auto text-lg text-gray-300 mb-6">
+                DFC has adopted the following Core Values which are an integral part of our Club’s operations. These
+                values set the standards for behavior and performance of everyone. Players and Coaches are asked to
+                learn and live the Core Values to help them become better players and better people.
+            </p>            
+            <p class="max-w-3xl mx-auto text-lg text-gray-300">At DFC, we believe the soccer experience should not be
+                defined by wins, goals, championships, etc., rather by the impact we leave on people that will hopefully
+                last a lifetime.</p>
+        </div>
+    </section>
+
+    <!-- Players Section -->
+    <section id="players" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-6">Meet the Boys</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-300 mb-12 text-center">
+            New Orleans DFC 2015 Boys is a group of ambitious and motivated players who are working hard to develop more professionalism, structure, and ultimately a higher level of training, which translates to better and more successful match day experiences. The main objective of their program is to create confident, brave, creative, and problem-solving players, focusing on individual player improvement, maximizing technical ability, ball mastery, and game-related decision making.
+            </p>
+            <!-- Container for player cards -->
+            <div id="player-card-container" class="flex flex-wrap justify-center gap-10">
+                <!-- Player cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Goals Section -->
+    <section id="goals" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Our Goals</h2>
+            <div class="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8 text-center">
+                <div class="bg-gray-700 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-500">EXCELLENCE</h3>
+                    <p class="text-gray-300">We understand that we will not achieve the impact we seek without sustained dedication. We must be disciplined in terms of becoming the best people we can be.</p>
+                </div>
+                <div class="bg-gray-700 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-500">PERSEVERANCE</h3>
+                    <p class="text-gray-300">Setbacks are inevitable, but our response defines us. We face every challenge with resilience, learn from defeat, and push forward with unwavering determination.</p>
+                </div>
+                <div class="bg-gray-700 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-500">PASSION</h3>
+                    <p class="text-gray-300">Our love for the game is the fuel that drives us. It's in every practice and every match, inspiring us to be better and to ignite that same fire in our teammates.</p>
+                </div>
+                <div class="bg-gray-700 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-500">SPORTSMANSHIP</h3>
+                    <p class="text-gray-300">We compete with integrity and honor. This means respecting the rules, our opponents, officials, and each other. True victory lies in conducting ourselves with class and dignity.</p>
+                </div>
+                <div class="bg-gray-700 p-8 rounded-lg lg:col-span-4 xl:col-span-4">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-500">SERVICE</h3>
+                    <p class="text-gray-300">Our responsibility extends beyond the soccer field. We are dedicated to making a positive impact in our community, using our platform to serve others and strengthen the bonds that connect us all.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-6">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>&copy; 2025 <a href="https://neworleansdfc.com" title="New Orleans DFC Website" target="_blank">New Orleans DFC</a>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- PLAYER DATA ---
+        // You can easily add, edit, or remove players from this list.
+        const players = [
+            {
+                name: 'Angel A',
+                rating: 99,
+                position: 'GK',
+                stats: { div: 99, han: 99, kic: 99, ref: 99, spd: 99, pos: 99 },
+                isGK: true,
+                jersey: { number: 14, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Emilio C',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 13, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Kayden E',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 6, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Maxx F',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 77, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Brecht G',
+                rating: 99,
+                position: 'DEF',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 30, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Johan G',
+                rating: 99,
+                position: 'DEF',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 7, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Liam L',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 18, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Byron L',
+                rating: 99,
+                position: 'DEF',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 76, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Jayden M',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 1, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Levi M',
+                rating: 99,
+                position: 'FWD',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 10, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Lucas R',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 9, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Mateo R',
+                rating: 99,
+                position: 'MID',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 8, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Callen T',
+                rating: 99,
+                position: 'MID',
+                nationalityUrl: 'https://placehold.co/40x27/f0f0f0/000000?text=USA',
+                playerImageUrl: 'https://placehold.co/250x250/bda87a/ffffff?text=CALLEN T',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 3, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+            {
+                name: 'Rene V',
+                rating: 99,
+                position: 'DEF',
+                stats: { pac: 99, sho: 99, pas: 99, dri: 99, def: 99, phy: 99 },
+                isGK: false,
+                jersey: { number: 21, primaryColor: '#ffffff', secondaryColor: '#000000' }
+            },
+        ];
+
+        // --- SCRIPT TO GENERATE CARDS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const playerContainer = document.getElementById('player-card-container');
+            if (!playerContainer) return;
+
+            // Function to generate the HTML for a player's jersey SVG
+            function generateJerseySvg(jersey, name) {
+                const playerName = name.split(" ", 1)[0];
+                return `
+                    <svg viewBox="0 0 100 100" class="player-image" preserveAspectRatio="xMidYMid meet">
+                        <g>                           
+                            <!-- Main jersey body -->
+                            <path fill="${jersey.primaryColor}" d="M27.638 19.9029l0.357877 0.986228c4.07365,-2.61026 9.27881,-3.86342 14.5985,-4.84374 -0.375594,-0.290553 -0.696856,-0.60591 -0.955519,-0.940165 -5.07169,1.01103 -10.0005,2.34451 -14.0009,4.79768zm43.1011 -0.281105l-0.333073 0.992134c-3.78192,-2.53348 -8.61503,-3.68861 -13.5556,-4.56854 0.349609,-0.29764 0.64843,-0.618903 0.888196,-0.957882 4.70909,0.915362 9.28472,2.15553 13.0005,4.53429zm-43.6515 -0.238585l5.8902 -3.03191c2.57837,-0.883472 5.35634,-1.51182 8.18038,-2.04805 -0.150001,-0.343703 -0.237403,-0.702761 -0.252758,-1.07127 -1.08898,0.217325 -2.17206,0.451185 -3.23979,0.706305l3.43467 -1.76812c0.321262,-0.770085 0.836227,-1.29214 1.47167,-1.64765 -1.16576,1.65119 -0.205513,3.36617 1.73387,4.40082 4.62523,2.4697 12.6863,0.751187 12.6863,-2.91853 0,-0.561028 -0.20197,-1.09253 -0.569296,-1.5756 0.8504,0.398035 1.54608,1.01694 1.96065,1.97009l2.45435 1.30867c-0.799613,-0.18071 -1.60631,-0.349609 -2.41892,-0.507878 -0.0141733,0.368507 -0.0944889,0.728746 -0.23386,1.07599 2.30789,0.4252 4.58271,0.922448 6.72761,1.60513l6.56698 3.502 4.10436 3.4831 3.86342 16.6206c1.32166,4.13271 0.394491,4.21657 -4.04295,5.66461 -4.91106,1.60277 -5.465,1.16694 -6.45478,-2.18033l-1.05237 -2.48152 -1.15867 9.10637 1.0252 38.8609c0.0661423,1.07481 -0.4252,1.61222 -1.47285,1.8071l-33.7455 -0.114568c-1.7882,-0.0484256 -1.88624,-0.394491 -1.71734,-2.19687l2.07876 -38.3566 -0.603548 -10.1091 -1.06182 4.34177c-0.270475,3.98625 -2.85475,2.75199 -6.60123,2.17206 -3.56814,-0.998039 -5.39296,-0.798431 -4.35003,-4.51893l4.03704 -18.6155 2.76026 -3.4831zm16.3761 -9.23511c1.74686,-0.537406 4.00987,-0.298821 5.78745,-0.366145 1.83309,0.00944889 4.32287,-0.240947 6.30123,0.324806 0.653155,0.556304 1.02993,1.2071 1.02993,1.89805 0,3.24215 -7.65478,4.92287 -12.084,2.55829 -2.09529,-1.11851 -2.7579,-2.90317 -1.03465,-4.415z"/>
+                            
+                            <!-- Player Name -->
+                            <text x="50" y="27.5" font-family="Inter, sans-serif" font-size="8" font-weight="900" fill="${jersey.secondaryColor}" text-anchor="middle" stroke="rgba(0,0,0,0)" stroke-width="1">${playerName}</text>
+
+                            <!-- Player Number -->
+                            <text x="50" y="45" font-family="Inter, sans-serif" font-size="20" font-weight="900" fill="${jersey.secondaryColor}" text-anchor="middle" stroke="rgba(0,0,0,0)" stroke-width="1">${jersey.number}</text>
+                        </g>
+                    </svg>
+                `;
+            }
+
+            // Function to generate the HTML for player stats
+            function generateStatsHtml(stats, isGK) {
+                if (isGK) {
+                    return `
+                        <div><span class="stat-value">${stats.div}</span> <span class="stat-label">DIV</span></div>
+                        <div><span class="stat-value">${stats.han}</span> <span class="stat-label">HAN</span></div>
+                        <div><span class="stat-value">${stats.kic}</span> <span class="stat-label">KIC</span></div>
+                        <div><span class="stat-value">${stats.ref}</span> <span class="stat-label">REF</span></div>
+                        <div><span class="stat-value">${stats.spd}</span> <span class="stat-label">SPD</span></div>
+                        <div><span class="stat-value">${stats.pos}</span> <span class="stat-label">POS</span></div>
+                    `;
+                } else {
+                    return `
+                        <div><span class="stat-value">${stats.pac}</span> <span class="stat-label">PAC</span></div>
+                        <div><span class="stat-value">${stats.sho}</span> <span class="stat-label">SHO</span></div>
+                        <div><span class="stat-value">${stats.pas}</span> <span class="stat-label">PAS</span></div>
+                        <div><span class="stat-value">${stats.dri}</span> <span class="stat-label">DRI</span></div>
+                        <div><span class="stat-value">${stats.def}</span> <span class="stat-label">DEF</span></div>
+                        <div><span class="stat-value">${stats.phy}</span> <span class="stat-label">PHY</span></div>
+                    `;
+                }
+            }
+
+            // Loop through each player and create a card
+            players.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'fut-card';
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="rating">${player.rating}</div>
+                        <div class="position">${player.position}</div>
+                    </div>
+                    <img src="dfc_logo.png" alt="Team Logo" class="team-logo">
+                    <h3 class="player-name">${player.name}</h3>
+                    ${generateJerseySvg(player.jersey, player.name)}
+                    <div class="stats-container">
+                        <div class="stats">
+                            ${generateStatsHtml(player.stats, player.isGK)}
+                        </div>
+                    </div>
+                `;
+                playerContainer.appendChild(card);
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+
+                // Close mobile menu on link click
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
